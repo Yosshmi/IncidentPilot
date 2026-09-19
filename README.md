@@ -4,43 +4,34 @@ Evidence-driven AI production incident investigation platform.
 
 IncidentPilot demonstrates how an AI-assisted investigator can inspect controlled synthetic logs, metrics, deployments and commit metadata, then produce traceable root-cause hypotheses instead of free-form guesses.
 
-## What the demo does
+## Demo capabilities
 
-- Displays three reproducible production-style incidents.
-- Investigates incidents through bounded, read-only tool-style steps.
-- Captures evidence with stable IDs.
-- Separates observed evidence from inferred root-cause hypotheses.
-- Uses Gemini on the server when `GEMINI_API_KEY` is available.
-- Automatically falls back to a deterministic investigator when Gemini is unavailable.
-- Keeps the demo free of real production credentials and infrastructure.
+- Three reproducible production-style incidents.
+- React/Vite engineering dashboard.
+- Node/Express server runtime compatible with Google AI Studio Build apps.
+- Server-side Gemini analysis when `GEMINI_API_KEY` is available.
+- Deterministic fallback when Gemini is unavailable or quota is exhausted.
+- Evidence IDs, tool execution history, hypotheses and investigation reports.
+- No real production credentials or destructive remediation.
 
-## Repository layout
+## Architecture
 
 ```
-frontend/   React + Vite UI and AI Studio-compatible Node runtime
-backend/    FastAPI reference backend, simulator and investigation engine
-docs/       Architecture and deployment notes
+Browser / React
+      |
+      v
+Node server (server.ts)
+  |             |
+  |             +--> Gemini API (optional)
+  |
+  +--> deterministic synthetic incidents
 ```
 
-The **AI Studio published version uses the Node server runtime** because Google AI Studio web apps support a React client with a Node.js server-side environment. The FastAPI implementation remains in the repository as a backend/system-design reference and can be run locally.
+The `backend/` directory contains a FastAPI reference implementation of the same investigation concepts for backend/system-design learning and testing. The published AI Studio app uses the Node runtime at repository root.
 
-## AI Studio / bootcamp path
-
-1. Open Google AI Studio Build mode.
-2. Choose **Add files (+) → Import from GitHub**.
-3. Import `Yosshmi/IncidentPilot`.
-4. Use `frontend/` as the web application.
-5. Add `GEMINI_API_KEY` through AI Studio Secrets if you want live Gemini analysis.
-6. Preview the app and run all three incidents.
-7. Click **Publish**.
-8. Choose an available custom subdomain such as `incidentpilot.ai.studio`.
-
-The deterministic fallback means the project remains demonstrable even without Gemini quota.
-
-## Local frontend
+## Run locally
 
 ```bash
-cd frontend
 npm install
 npm run build
 npm start
@@ -48,25 +39,36 @@ npm start
 
 Open http://localhost:8080.
 
-## Local FastAPI reference backend
+Without a Gemini key the investigation automatically uses deterministic mode. To test Gemini:
 
 ```bash
-cd backend
-python -m venv .venv
-# activate the environment
-pip install -r requirements.txt
-uvicorn app.main:app --reload
+cp .env.example .env
+# add GEMINI_API_KEY
+npm start
 ```
 
-## Safety boundaries
+## Publish for the bootcamp
 
-- No arbitrary SQL.
-- No shell or filesystem tools for the investigator.
-- Retrieved evidence is treated as data, not instructions.
-- Evidence IDs must exist before they can support a hypothesis.
-- No destructive remediation is executed.
-- Synthetic hidden ground truth is reserved for evaluation, not investigation.
+1. Open **Google AI Studio → Build**.
+2. Click **Add files (+) → Import from GitHub**.
+3. Import **Yosshmi/IncidentPilot**.
+4. Let AI Studio render the preview.
+5. In Secrets, keep `GEMINI_API_KEY` server-side if live Gemini analysis is desired.
+6. Click **Publish**.
+7. Choose an available custom subdomain such as **incidentpilot.ai.studio**.
+8. Test incident **INC-4098** end-to-end before submitting the URL.
 
-## Deployment goal
+See `docs/AI_STUDIO_PUBLISH.md` for the exact final steps.
 
-The bootcamp version intentionally avoids Cloud SQL, hosted Redis, Kafka, Kubernetes, GPUs and always-on workers. It is designed for AI Studio's small demo deployment path and scales the underlying Cloud Run service to zero when idle where supported.
+## Zero-cost design
+
+The demo does not require Cloud SQL, hosted Redis, Kafka, Kubernetes, a GPU, a domain purchase, or an always-running worker. It is intentionally compatible with the small AI Studio publishing path. Starter Tier availability is account-dependent, so confirm the Publish screen before accepting any billing upgrade.
+
+## Safety
+
+- Gemini never gets arbitrary SQL, shell or filesystem tools.
+- Retrieved text is treated as untrusted evidence.
+- Evidence is created by trusted server logic.
+- Model conclusions must reference available evidence.
+- No remediation action is automatically executed.
+- Synthetic ground truth is for evaluation only.
