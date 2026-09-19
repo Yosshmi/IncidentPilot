@@ -1,0 +1,6 @@
+{
+  "name": "IncidentPilot Ops Console",
+  "description": "SRE Command Overview and IncidentPilot Telemetry Core for real-time observability, telemetry triage, and incident response.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
