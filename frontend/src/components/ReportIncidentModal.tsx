@@ -1,0 +1,6 @@
+import React,{useState} from 'react';
+import { Incident } from '../types';
+export function ReportIncidentModal({isOpen,onClose,onReport,availableServices}:{isOpen:boolean;onClose:()=>void;onReport:(i:Incident)=>void;availableServices:string[]}) {
+  const [title,setTitle]=useState(''); if(!isOpen)return null; const submit=()=>{if(!title)return;onReport({id:`INC-${Math.floor(5000+Math.random()*4000)}`,title,severity:'P2',affectedService:availableServices[0]||'unknown',duration:'0m',status:'Active',lead:'Demo operator',summary:title,detectedAt:new Date().toISOString(),timeline:[]});setTitle('');onClose()};
+  return <div className="fixed inset-0 z-[100] bg-black/60 grid place-items-center"><div className="w-[480px] rounded-xl bg-[#131b31] border border-blue-400/20 p-5"><h2 className="text-white font-medium">Report incident</h2><input autoFocus value={title} onChange={e=>setTitle(e.target.value)} placeholder="Short incident title" className="mt-4 w-full bg-[#0a1228] border border-blue-400/10 rounded-lg p-3 text-sm text-white"/><div className="mt-4 flex justify-end gap-2"><button onClick={onClose} className="px-3 py-2 text-xs text-slate-400">Cancel</button><button onClick={submit} className="px-3 py-2 text-xs bg-sky-600 text-white rounded-lg">Create</button></div></div></div>
+}

@@ -1,0 +1,8 @@
+import React from 'react';
+import { TelemetryLog } from '../types';
+export function EvidenceExplorerView({logs,searchQuery,onSearchChange}:{logs:TelemetryLog[];searchQuery:string;onSearchChange:(v:string)=>void}) {
+  const shown=logs.filter(l=>!searchQuery||[l.service,l.message,l.traceId].join(' ').toLowerCase().includes(searchQuery.toLowerCase()));
+  return <div className="max-w-7xl mx-auto space-y-5"><div><div className="text-xs uppercase tracking-widest text-sky-300">Evidence explorer</div><h1 className="text-3xl text-white font-semibold mt-1">Logs</h1><p className="text-sm text-slate-400 mt-1">Inspect one evidence type at a time.</p></div><input value={searchQuery} onChange={e=>onSearchChange(e.target.value)} placeholder="Filter logs…" className="w-full bg-[#131b31] border border-blue-400/10 rounded-lg p-3 text-sm text-white outline-none"/>
+    <div className="rounded-xl bg-[#050d23] border border-blue-400/10 overflow-hidden font-mono">{shown.slice(0,20).map(l=><div key={l.id} className="grid grid-cols-[120px_90px_160px_1fr] gap-3 px-4 py-2.5 border-b border-blue-400/5 text-xs"><span className="text-slate-500">{l.timestamp}</span><span className={l.level==='ERROR'||l.level==='FATAL'?'text-red-300':l.level==='WARN'?'text-amber-300':'text-sky-300'}>{l.level}</span><span className="text-slate-400">{l.service}</span><span className="text-slate-300">{l.message}</span></div>)}</div>
+  </div>
+}
